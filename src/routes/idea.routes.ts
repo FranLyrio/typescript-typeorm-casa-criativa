@@ -2,17 +2,20 @@ import { Router } from 'express';
 import { getCustomRepository } from 'typeorm';
 
 import IdeaRepository from '../repositories/IdeaRepository';
+
 import CreateIdeaService from '../services/CreateIdeaService';
 import UpdateIdeaService from '../services/UpdateIdeaService';
 import DeleteIdeaService from '../services/DeleteIdeaService';
+import PaginationListService from '../services/PaginationListService';
 
 const ideaRouter = Router();
 
-ideaRouter.get('/', async (request, response) => {
-  const ideaRepository = getCustomRepository(IdeaRepository);
-  const ideas = await ideaRepository.find();
+ideaRouter.get('/:page', async (request, response) => {
+  const { page = 1 } = request.params; // ?chave=valor
+  const paginationListService = new PaginationListService();
+  const pagination = await paginationListService.execute({ page });
 
-  return response.json(ideas);
+  return response.json(pagination);
 });
 
 ideaRouter.post('/', async (request, response) => {
@@ -23,7 +26,7 @@ ideaRouter.post('/', async (request, response) => {
   const idea = await createIdeaService.execute({
     title,
     category,
-    description
+    description,
   });
 
   return response.json(idea);
@@ -39,7 +42,7 @@ ideaRouter.put('/:id', async (request, response) => {
     id,
     title,
     description,
-    category
+    category,
   });
 
   return response.json(updatedIdea);
@@ -47,7 +50,7 @@ ideaRouter.put('/:id', async (request, response) => {
 
 ideaRouter.delete('/:id', async (request, response) => {
   const { id } = request.params;
-  
+
   const deleteIdeaService = new DeleteIdeaService();
   await deleteIdeaService.execute(id);
 
