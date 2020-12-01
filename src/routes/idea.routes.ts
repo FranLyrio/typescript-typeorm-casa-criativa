@@ -1,17 +1,24 @@
 import { Router } from 'express';
-import { getCustomRepository } from 'typeorm';
 
-import IdeaRepository from '../repositories/IdeaRepository';
+import { getCustomRepository } from 'typeorm';
 
 import CreateIdeaService from '../services/CreateIdeaService';
 import UpdateIdeaService from '../services/UpdateIdeaService';
 import DeleteIdeaService from '../services/DeleteIdeaService';
 import PaginationListService from '../services/PaginationListService';
+import IdeaRepository from '../repositories/IdeaRepository';
 
 const ideaRouter = Router();
 
+ideaRouter.get('/all', async (request, response) => {
+  const ideaRepository = getCustomRepository(IdeaRepository);
+  const findAll = await ideaRepository.find();
+
+  return response.json(findAll);
+});
+
 ideaRouter.get('/:page', async (request, response) => {
-  const { page = 1 } = request.params; // ?chave=valor
+  const { page = 1 } = request.params;
   const paginationListService = new PaginationListService();
   const pagination = await paginationListService.execute({ page });
 

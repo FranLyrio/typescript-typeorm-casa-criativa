@@ -6,15 +6,17 @@ interface PaginationDTO {
 }
 
 export default class PaginationListService {
-  public async execute({ page }: PaginationDTO): Promise<Idea[]> {
+  public async execute({
+    page,
+  }: PaginationDTO): Promise<Array<Idea[] | number>> {
     const ideaRepository = getRepository(Idea);
 
-    const pagination = await ideaRepository.find({
+    const [dataPerPage, count] = await ideaRepository.findAndCount({
       take: 4,
       skip: (page - 1) * 4,
     });
 
-    return pagination;
+    return [dataPerPage, count];
   }
 }
 
