@@ -17,8 +17,8 @@ ideaRouter.get('/all', async (request, response) => {
   return response.json(findAll);
 });
 
-ideaRouter.get('/:page', async (request, response) => {
-  const { page = 1 } = request.params;
+ideaRouter.get('', async (request, response) => {
+  const { page = 1 } = request.query;
   const paginationListService = new PaginationListService();
   const pagination = await paginationListService.execute({ page });
 
